@@ -1,8 +1,7 @@
 from flask import Flask, jsonify, request
 
-app = Flask(__name__)
+app = Flask(__name__)  # ✅ Gunicorn needs this
 
-# HTML response route
 @app.route("/")
 def home():
     return """
@@ -15,7 +14,6 @@ def home():
     </html>
     """
 
-# JSON response route
 @app.route("/api/greet")
 def greet():
     name = request.args.get("name", "stranger")
@@ -23,7 +21,6 @@ def greet():
         "message": f"Hello, {name}!"
     })
 
-# Route that echoes posted JSON data
 @app.route("/api/echo", methods=["POST"])
 def echo():
     data = request.get_json()
@@ -31,10 +28,10 @@ def echo():
         "you_sent": data
     })
 
-# A simple health check route
 @app.route("/health")
 def health():
     return jsonify({"status": "ok"})
 
-
-app.run(host="127.0.0.1", port=5000, debug=True)
+# Optional: only for local testing, ignored by Gunicorn
+if __name__ == "__main__":
+    app.run(debug=True)
